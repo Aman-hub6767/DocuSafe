@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DocuSafe</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Noto+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--navy:#0a1628;--blue:#1a3a6b;--accent:#f7941d;--accent2:#2196f3;--green:#00c853;--red:#e53935;--light:#f0f4ff;--white:#ffffff;--gray:#8a99b3;--card:#ffffff;--border:#dde3f0;--shadow:0 4px 24px rgba(10,22,40,0.10);--shadow2:0 8px 40px rgba(10,22,40,0.18);}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Noto Sans',sans-serif;background:var(--light);color:var(--navy);min-height:100vh;}
+  .navbar{background:var(--white);border-bottom:2px solid var(--border);padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:68px;position:sticky;top:0;z-index:100;box-shadow:var(--shadow);}
+  .logo{display:flex;align-items:center;gap:12px;}
+  .logo-icon{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--blue),var(--accent2));display:flex;align-items:center;justify-content:center;}
+  .logo-icon svg{width:26px;height:26px;fill:white;}
+  .logo-text h1{font-family:'Rajdhani',sans-serif;font-size:1.5rem;font-weight:700;color:var(--navy);}
+  .logo-text p{font-size:0.68rem;color:var(--gray);margin-top:-2px;letter-spacing:0.5px;}
+  .nav-right{display:flex;align-items:center;gap:12px;}
+  .nav-btn{padding:8px 20px;border-radius:8px;font-size:0.88rem;font-weight:600;cursor:pointer;transition:all 0.2s;border:none;font-family:'Noto Sans',sans-serif;}
+  .btn-outline{background:transparent;border:2px solid var(--blue);color:var(--blue);}
+  .btn-outline:hover{background:var(--blue);color:white;}
+  .btn-primary{background:var(--accent);color:white;}
+  .btn-primary:hover{background:#e8850f;transform:translateY(-1px);}
+  .btn-danger{background:var(--red);color:white;}
+  .user-chip{display:flex;align-items:center;gap:8px;background:var(--light);border-radius:24px;padding:6px 16px 6px 8px;font-size:0.85rem;font-weight:600;color:var(--navy);}
+  .user-avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--accent2));color:white;display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;}
+  .page{display:none;}
+  .page.active{display:block;}
+  .hero{background:linear-gradient(135deg,var(--navy) 0%,var(--blue) 60%,#1565c0 100%);padding:70px 40px 80px;display:flex;align-items:center;justify-content:center;gap:60px;flex-wrap:wrap;position:relative;overflow:hidden;}
+  .hero::before{content:'';position:absolute;right:-80px;top:-80px;width:400px;height:400px;border-radius:50%;background:rgba(255,255,255,0.04);}
+  .hero::after{content:'';position:absolute;left:30%;bottom:-60px;width:200px;height:200px;border-radius:50%;background:rgba(247,148,29,0.12);}
+  .hero-text{color:white;max-width:520px;z-index:1;}
+  .hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);border-radius:20px;padding:5px 14px;font-size:0.78rem;margin-bottom:18px;color:rgba(255,255,255,0.85);}
+  .hero-title{font-family:'Rajdhani',sans-serif;font-size:2.8rem;font-weight:700;line-height:1.15;margin-bottom:14px;}
+  .hero-title span{color:var(--accent);}
+  .hero-sub{font-size:1.05rem;color:rgba(255,255,255,0.75);margin-bottom:30px;line-height:1.7;}
+  .hero-btns{display:flex;gap:14px;flex-wrap:wrap;}
+  .hero-btn{padding:13px 28px;border-radius:10px;font-size:0.95rem;font-weight:700;cursor:pointer;transition:all 0.2s;border:none;font-family:'Noto Sans',sans-serif;}
+  .hero-btn-primary{background:var(--accent);color:white;}
+  .hero-btn-primary:hover{background:#e8850f;transform:translateY(-2px);}
+  .hero-btn-outline{background:transparent;border:2px solid rgba(255,255,255,0.5);color:white;}
+  .hero-btn-outline:hover{background:rgba(255,255,255,0.1);}
+  .hero-card{background:rgba(255,255,255,0.10);border:1px solid rgba(255,255,255,0.15);border-radius:20px;padding:28px;min-width:280px;z-index:1;backdrop-filter:blur(10px);}
+  .hero-card h3{color:white;font-family:'Rajdhani',sans-serif;font-size:1.1rem;margin-bottom:16px;opacity:0.85;}
+  .stat-row{display:flex;gap:24px;flex-wrap:wrap;}
+  .stat{text-align:center;}
+  .stat-num{font-family:'Rajdhani',sans-serif;font-size:2rem;font-weight:700;color:var(--accent);}
+  .stat-label{font-size:0.75rem;color:rgba(255,255,255,0.65);margin-top:2px;}
+  .banner-strip{background:linear-gradient(90deg,#e8f4fd,#fff8f0,#e8f0fe);padding:14px 32px;display:flex;align-items:center;justify-content:space-between;gap:16px;border-bottom:1px solid var(--border);overflow-x:auto;}
+  .banner-item{display:flex;align-items:center;gap:10px;background:white;border-radius:12px;padding:10px 18px;border:1px solid var(--border);flex:1;min-width:180px;box-shadow:var(--shadow);cursor:pointer;transition:all 0.2s;}
+  .banner-item:hover{transform:translateY(-2px);box-shadow:var(--shadow2);}
+  .banner-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;}
+  .banner-item-title{font-weight:700;color:var(--navy);font-size:0.85rem;}
+  .banner-item-sub{color:var(--gray);margin-top:1px;font-size:0.8rem;}
+  .banner-badge{display:inline-block;background:var(--green);color:white;font-size:0.65rem;font-weight:700;padding:2px 7px;border-radius:20px;margin-top:4px;}
+  .section{padding:50px 40px;max-width:1200px;margin:0 auto;}
+  .section-title{font-family:'Rajdhani',sans-serif;font-size:1.8rem;font-weight:700;color:var(--navy);margin-bottom:8px;}
+  .section-sub{color:var(--gray);font-size:0.9rem;margin-bottom:32px;}
+  .features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;}
+  .feature-card{background:white;border-radius:16px;padding:28px 22px;border:1px solid var(--border);box-shadow:var(--shadow);transition:all 0.2s;}
+  .feature-card:hover{transform:translateY(-4px);box-shadow:var(--shadow2);}
+  .feature-icon{font-size:2.2rem;margin-bottom:14px;}
+  .feature-title{font-weight:700;color:var(--navy);margin-bottom:6px;font-size:1rem;}
+  .feature-desc{color:var(--gray);font-size:0.85rem;line-height:1.6;}
+  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(10,22,40,0.65);z-index:200;align-items:center;justify-content:center;backdrop-filter:blur(3px);}
+  .modal-overlay.open{display:flex;}
+  .modal{background:white;border-radius:20px;padding:40px 36px;width:100%;max-width:420px;position:relative;box-shadow:var(--shadow2);animation:modalIn 0.25s ease;max-height:90vh;overflow-y:auto;}
+  @keyframes modalIn{from{opacity:0;transform:scale(0.93) translateY(20px)}to{opacity:1;transform:none}}
+  .modal-close{position:absolute;top:16px;right:16px;background:var(--light);border:none;border-radius:8px;width:32px;height:32px;cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;color:var(--gray);}
+  .modal-close:hover{background:var(--border);color:var(--navy);}
+  .modal-logo{display:flex;align-items:center;gap:10px;margin-bottom:24px;}
+  .modal-logo-icon{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--blue),var(--accent2));display:flex;align-items:center;justify-content:center;}
+  .modal-logo-icon svg{width:22px;height:22px;fill:white;}
+  .modal-title{font-family:'Rajdhani',sans-serif;font-size:1.5rem;font-weight:700;color:var(--navy);}
+  .tabs{display:flex;border-bottom:2px solid var(--border);margin-bottom:24px;}
+  .tab{padding:10px 20px;cursor:pointer;font-weight:600;font-size:0.9rem;color:var(--gray);border-bottom:3px solid transparent;transition:all 0.2s;margin-bottom:-2px;}
+  .tab.active{color:var(--blue);border-bottom-color:var(--blue);}
+  .form-group{margin-bottom:16px;}
+  .form-label{font-size:0.82rem;font-weight:600;color:var(--navy);margin-bottom:6px;display:block;}
+  .form-input{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:0.9rem;font-family:'Noto Sans',sans-serif;color:var(--navy);transition:border 0.2s;background:var(--light);outline:none;}
+  .form-input:focus{border-color:var(--accent2);background:white;}
+  .form-btn{width:100%;padding:13px;border-radius:10px;border:none;background:var(--blue);color:white;font-size:1rem;font-weight:700;font-family:'Noto Sans',sans-serif;cursor:pointer;transition:all 0.2s;margin-top:6px;}
+  .form-btn:hover{background:#1a3580;transform:translateY(-1px);}
+  .form-btn.orange{background:var(--accent);}
+  .form-btn.orange:hover{background:#e8850f;}
+  .msg{padding:10px 14px;border-radius:8px;font-size:0.85rem;margin-bottom:14px;font-weight:500;display:none;}
+  .msg.error{background:#fdecea;color:var(--red);border:1px solid #f9cdd0;display:block;}
+  .msg.success{background:#e8f5e9;color:#2e7d32;border:1px solid #c8e6c9;display:block;}
+  .dash-header{background:linear-gradient(135deg,var(--navy),var(--blue));padding:30px 40px 50px;color:white;}
+  .dash-welcome{font-family:'Rajdhani',sans-serif;font-size:1.8rem;font-weight:700;}
+  .dash-sub{color:rgba(255,255,255,0.65);font-size:0.9rem;margin-top:4px;}
+  .dash-stats{display:flex;gap:16px;margin-top:24px;flex-wrap:wrap;}
+  .dash-stat{background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.18);border-radius:12px;padding:16px 22px;flex:1;min-width:140px;}
+  .dash-stat-num{font-family:'Rajdhani',sans-serif;font-size:2rem;font-weight:700;color:var(--accent);}
+  .dash-stat-label{font-size:0.78rem;color:rgba(255,255,255,0.65);margin-top:2px;}
+  .dash-body{padding:0 40px 40px;position:relative;margin-top:-20px;}
+  .dash-section{background:white;border-radius:16px;border:1px solid var(--border);box-shadow:var(--shadow);margin-bottom:24px;overflow:hidden;}
+  .dash-section-header{padding:18px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+  .dash-section-title{font-family:'Rajdhani',sans-serif;font-size:1.1rem;font-weight:700;color:var(--navy);}
+  .doc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px;padding:20px;}
+  .doc-card{border:1.5px solid var(--border);border-radius:12px;padding:16px;text-align:center;cursor:pointer;transition:all 0.2s;position:relative;}
+  .doc-card:hover{border-color:var(--accent2);box-shadow:0 4px 16px rgba(33,150,243,0.15);transform:translateY(-2px);}
+  .doc-icon{font-size:2.2rem;margin-bottom:10px;}
+  .doc-name{font-weight:700;font-size:0.85rem;color:var(--navy);margin-bottom:4px;}
+  .doc-type{font-size:0.75rem;color:var(--gray);}
+  .doc-date{font-size:0.72rem;color:var(--gray);margin-top:6px;}
+  .doc-actions{display:flex;gap:6px;justify-content:center;margin-top:10px;}
+  .doc-action-btn{padding:4px 10px;border-radius:6px;font-size:0.72rem;font-weight:600;cursor:pointer;border:none;transition:all 0.2s;}
+  .btn-view{background:#e3f2fd;color:#1565c0;}
+  .btn-view:hover{background:#1565c0;color:white;}
+  .btn-del{background:#fdecea;color:var(--red);}
+  .btn-del:hover{background:var(--red);color:white;}
+  .doc-verified{position:absolute;top:8px;right:8px;background:var(--green);color:white;border-radius:20px;font-size:0.6rem;font-weight:700;padding:2px 6px;}
+  .empty-state{padding:40px;text-align:center;color:var(--gray);}
+  .empty-icon{font-size:3rem;margin-bottom:12px;opacity:0.5;}
+  .upload-area{border:2px dashed var(--border);border-radius:12px;padding:30px;text-align:center;cursor:pointer;transition:all 0.2s;margin:20px;background:var(--light);}
+  .upload-area:hover,.upload-area.dragover{border-color:var(--accent2);background:#e8f4fd;}
+  .upload-icon{font-size:2.5rem;margin-bottom:10px;}
+  .upload-text{font-weight:600;color:var(--navy);margin-bottom:4px;}
+  .upload-sub{color:var(--gray);font-size:0.82rem;}
+  #fileInput{display:none;}
+  .upload-form{padding:0 20px 20px;}
+  .upload-form .form-group{margin-bottom:12px;}
+  .upload-form .form-label{font-size:0.8rem;}
+  .upload-form .form-input{padding:9px 12px;font-size:0.85rem;}
+  select.form-input{cursor:pointer;}
+  .doc-viewer-overlay{display:none;position:fixed;inset:0;background:rgba(10,22,40,0.8);z-index:300;align-items:center;justify-content:center;padding:20px;}
+  .doc-viewer-overlay.open{display:flex;}
+  .doc-viewer{background:white;border-radius:20px;width:100%;max-width:600px;max-height:85vh;overflow-y:auto;box-shadow:var(--shadow2);animation:modalIn 0.25s ease;}
+  .doc-viewer-header{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:white;z-index:1;}
+  .doc-viewer-body{padding:24px;}
+  .doc-detail-row{display:flex;padding:12px 0;border-bottom:1px solid var(--light);gap:16px;}
+  .doc-detail-label{font-size:0.8rem;font-weight:700;color:var(--gray);width:130px;flex-shrink:0;}
+  .doc-detail-val{font-size:0.9rem;color:var(--navy);font-weight:500;}
+  .doc-preview-area{background:var(--light);border-radius:12px;padding:30px;text-align:center;margin:20px 0;}
+  .doc-preview-icon{font-size:4rem;margin-bottom:12px;}
+  .doc-preview-name{font-weight:700;color:var(--navy);font-size:1.1rem;}
+  .verified-banner{background:#e8f5e9;border:1px solid #a5d6a7;border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:10px;color:#2e7d32;font-weight:600;font-size:0.88rem;margin-bottom:16px;}
+  .toast{position:fixed;bottom:28px;right:28px;z-index:500;background:var(--navy);color:white;border-radius:12px;padding:14px 20px;font-size:0.88rem;font-weight:600;box-shadow:var(--shadow2);display:none;animation:toastIn 0.3s ease;}
+  @keyframes toastIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+  .toast.show{display:block;}
+  .toast.green{background:var(--green);}
+  .toast.red{background:var(--red);}
+  footer{background:var(--navy);color:rgba(255,255,255,0.6);padding:30px 40px;text-align:center;font-size:0.82rem;margin-top:20px;line-height:1.8;}
+  footer strong{color:white;}
+  .dev-credit{margin-top:12px;font-size:0.8rem;color:rgba(255,255,255,0.5);border-top:1px solid rgba(255,255,255,0.12);padding-top:12px;}
+  .dev-credit .dev-name{color:var(--accent);font-weight:700;}
+  @media(max-width:700px){.hero{padding:40px 20px;}.hero-title{font-size:2rem;}.section{padding:30px 16px;}.dash-header{padding:20px 16px 40px;}.dash-body{padding:0 16px 30px;}.navbar{padding:0 16px;}.banner-strip{padding:10px 12px;}}
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="logo">
+    <div class="logo-icon"><svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 4l6 2.67V11c0 3.72-2.54 7.2-6 8.34C8.54 18.2 6 14.72 6 11V7.67L12 5zm-1 3v4h2V8h-2zm0 6v2h2v-2h-2z"/></svg></div>
+    <div class="logo-text"><h1>DocuSafe</h1><p>Digital Document Wallet</p></div>
+  </div>
+  <div class="nav-right" id="navRight">
+    <button class="nav-btn btn-outline" onclick="openModal('login')">Login</button>
+    <button class="nav-btn btn-primary" onclick="openModal('register')">Register</button>
+  </div>
+</nav>
+
+<div id="homePage" class="page active">
+  <div class="hero">
+    <div class="hero-text">
+      <div class="hero-badge">🇮🇳 Government of India – Digital India Initiative</div>
+      <h1 class="hero-title">Apne Documents<br><span>Hamesha Safe</span> Rakho</h1>
+      <p class="hero-sub">DocuSafe aapka digital document wallet hai. Aadhaar, PAN, Driving License aur sare important documents ek jagah store karo – kabhi bhi, kahin bhi access karo.</p>
+      <div class="hero-btns">
+        <button class="hero-btn hero-btn-primary" onclick="openModal('register')">📁 Start Karo – Free Hai</button>
+        <button class="hero-btn hero-btn-outline" onclick="openModal('login')">🔑 Login Karo</button>
+      </div>
+    </div>
+    <div class="hero-card">
+      <h3>📊 Platform Statistics</h3>
+      <div class="stat-row">
+        <div class="stat"><div class="stat-num">2.4Cr+</div><div class="stat-label">Registered Users</div></div>
+        <div class="stat"><div class="stat-num">8.1Cr+</div><div class="stat-label">Documents Stored</div></div>
+      </div>
+      <div class="stat-row" style="margin-top:16px">
+        <div class="stat"><div class="stat-num">350+</div><div class="stat-label">Partner Orgs</div></div>
+        <div class="stat"><div class="stat-num">99.9%</div><div class="stat-label">Uptime</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="banner-strip">
+    <div class="banner-item"><div class="banner-icon" style="background:#e3f2fd">🎓</div><div><div class="banner-item-title">CBSE Class 10 & 12</div><div class="banner-item-sub">Results 2026</div><div class="banner-badge">Coming Soon</div></div></div>
+    <div class="banner-item"><div class="banner-icon" style="background:#e8f5e9">🚗</div><div><div class="banner-item-title">Driving License</div><div class="banner-item-sub">Ministry of Road Transport</div><div class="banner-badge">Available</div></div></div>
+    <div class="banner-item"><div class="banner-icon" style="background:#fff3e0">💳</div><div><div class="banner-item-title">PAN Card</div><div class="banner-item-sub">Income Tax Department</div><div class="banner-badge">Available</div></div></div>
+    <div class="banner-item"><div class="banner-icon" style="background:#fce4ec">🛂</div><div><div class="banner-item-title">Passport</div><div class="banner-item-sub">MEA – Passport Seva</div><div class="banner-badge">Available</div></div></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🔒 Kyun Chunein DocuSafe?</div>
+    <div class="section-sub">India ka sabse secure aur easy digital document wallet</div>
+    <div class="features-grid">
+      <div class="feature-card"><div class="feature-icon">🔐</div><div class="feature-title">256-bit Encryption</div><div class="feature-desc">Aapke documents military-grade AES-256 encryption se secure hain. Koi bhi unauthorized access nahi kar sakta.</div></div>
+      <div class="feature-card"><div class="feature-icon">📱</div><div class="feature-title">Kabhi Bhi Access</div><div class="feature-desc">Mobile, tablet ya computer – kisi bhi device se apne documents access karo, 24x7.</div></div>
+      <div class="feature-card"><div class="feature-icon">✅</div><div class="feature-title">Digitally Verified</div><div class="feature-desc">Government-issued documents automatically verified hote hain. Koi manual verification ki zaroorat nahi.</div></div>
+      <div class="feature-card"><div class="feature-icon">🤝</div><div class="feature-title">Share Karo Securely</div><div class="feature-desc">Banks, hospitals, schools – kisi bhi organization ke saath ek click mein documents securely share karo.</div></div>
+      <div class="feature-card"><div class="feature-icon">☁️</div><div class="feature-title">Cloud Backup</div><div class="feature-desc">Aapke documents automatically cloud mein backup hote hain. Phone kho jaaye toh bhi documents safe rahenge.</div></div>
+      <div class="feature-card"><div class="feature-icon">🆓</div><div class="feature-title">Bilkul Free</div><div class="feature-desc">Basic storage aur access bilkul free hai. Government of India ka initiative hai – sab ke liye free.</div></div>
+    </div>
+  </div>
+
+  <footer>
+    <strong>DocuSafe – Digital Document Wallet</strong><br>
+    Government of India Digital Initiative | Powered by Digital India 🇮🇳<br>
+    <span style="font-size:0.75rem;margin-top:8px;display:block">© 2026 DocuSafe. All rights reserved. | Privacy Policy | Terms of Use</span>
+    <div class="dev-credit">
+      💻 Developed with ❤️ by <span class="dev-name">Gyanendra Pandey</span> &amp; <span class="dev-name">Pranjal Saini</span>
+    </div>
+  </footer>
+</div>
+
+<div id="dashPage" class="page">
+  <div class="dash-header">
+    <div class="dash-welcome">🙏 Namaste, <span id="dashName">User</span>!</div>
+    <div class="dash-sub">Aapka DocuSafe Dashboard – Saare documents ek jagah</div>
+    <div class="dash-stats">
+      <div class="dash-stat"><div class="dash-stat-num" id="statTotal">0</div><div class="dash-stat-label">Total Documents</div></div>
+      <div class="dash-stat"><div class="dash-stat-num" id="statVerified">0</div><div class="dash-stat-label">Verified</div></div>
+      <div class="dash-stat"><div class="dash-stat-num" id="statCategories">0</div><div class="dash-stat-label">Categories</div></div>
+    </div>
+  </div>
+  <div class="dash-body">
+    <div class="dash-section">
+      <div class="dash-section-header"><div class="dash-section-title">📤 Naya Document Upload Karo</div></div>
+      <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
+        <div class="upload-icon">📂</div>
+        <div class="upload-text">Yahan click karo ya file drag & drop karo</div>
+        <div class="upload-sub">PDF, JPG, PNG, JPEG – Max 10MB</div>
+      </div>
+      <input type="file" id="fileInput" accept=".pdf,.jpg,.jpeg,.png" onchange="handleFileSelect(event)">
+      <div class="upload-form" id="uploadForm" style="display:none">
+        <div style="background:#e3f2fd;border:1px solid #bbdefb;border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:0.82rem;color:#1565c0;font-weight:600;" id="selectedFileName"></div>
+        <div class="form-group"><label class="form-label">Document Name *</label><input class="form-input" id="docName" placeholder="e.g. Aadhaar Card"></div>
+        <div class="form-group"><label class="form-label">Document Type *</label>
+          <select class="form-input" id="docType">
+            <option value="">-- Type Chunein --</option>
+            <option value="identity">🪪 Identity Proof (Aadhaar, PAN, Passport)</option>
+            <option value="education">🎓 Education (Marksheet, Degree, Certificate)</option>
+            <option value="vehicle">🚗 Vehicle (RC, Driving License, Insurance)</option>
+            <option value="property">🏠 Property (Deed, Registration, NOC)</option>
+            <option value="medical">🏥 Medical (Health Card, Report, Prescription)</option>
+            <option value="financial">💰 Financial (ITR, Bank Statement, Form 16)</option>
+            <option value="other">📄 Other</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Issue Date</label><input class="form-input" id="docDate" type="date"></div>
+        <div class="form-group"><label class="form-label">Issuing Authority</label><input class="form-input" id="docAuthority" placeholder="e.g. UIDAI, Income Tax Dept."></div>
+        <button class="form-btn orange" onclick="uploadDocument()">✅ Upload Document</button>
+        <button class="form-btn" style="background:var(--gray);margin-top:8px" onclick="cancelUpload()">Cancel</button>
+      </div>
+    </div>
+    <div class="dash-section">
+      <div class="dash-section-header">
+        <div class="dash-section-title">📁 Mere Documents</div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <input class="form-input" id="searchDocs" placeholder="🔍 Search..." style="width:180px;padding:7px 12px;font-size:0.82rem" oninput="renderDocs()">
+          <select class="form-input" id="filterCat" style="width:140px;padding:7px 12px;font-size:0.82rem" onchange="renderDocs()">
+            <option value="">All Categories</option>
+            <option value="identity">Identity</option>
+            <option value="education">Education</option>
+            <option value="vehicle">Vehicle</option>
+            <option value="property">Property</option>
+            <option value="medical">Medical</option>
+            <option value="financial">Financial</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="doc-grid" id="docGrid">
+        <div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">📂</div><div>Koi document nahi mila. Upar se upload karo!</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="authModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-logo">
+      <div class="modal-logo-icon"><svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 4l6 2.67V11c0 3.72-2.54 7.2-6 8.34C8.54 18.2 6 14.72 6 11V7.67L12 5zm-1 3v4h2V8h-2zm0 6v2h2v-2h-2z"/></svg></div>
+      <div><div class="modal-title">DocuSafe</div><div style="font-size:0.75rem;color:var(--gray)">Digital Document Wallet</div></div>
+    </div>
+    <div class="tabs">
+      <div class="tab active" id="tabLogin" onclick="switchTab('login')">Login</div>
+      <div class="tab" id="tabRegister" onclick="switchTab('register')">Register</div>
+    </div>
+    <div id="authMsg" class="msg"></div>
+    <div id="loginForm">
+      <div class="form-group"><label class="form-label">📧 Email / Mobile</label><input class="form-input" id="loginEmail" placeholder="Email ya mobile number dalein"></div>
+      <div class="form-group"><label class="form-label">🔒 Password</label><input class="form-input" id="loginPassword" type="password" placeholder="Password dalein"></div>
+      <button class="form-btn" onclick="doLogin()">🔑 Login Karo</button>
+      <p style="text-align:center;margin-top:14px;font-size:0.82rem;color:var(--gray)">Account nahi hai? <span style="color:var(--accent2);cursor:pointer;font-weight:600" onclick="switchTab('register')">Register karo</span></p>
+    </div>
+    <div id="registerForm" style="display:none">
+      <div class="form-group"><label class="form-label">👤 Full Name</label><input class="form-input" id="regName" placeholder="Apna pura naam dalein"></div>
+      <div class="form-group"><label class="form-label">📧 Email</label><input class="form-input" id="regEmail" type="email" placeholder="Email address dalein"></div>
+      <div class="form-group"><label class="form-label">📱 Mobile Number</label><input class="form-input" id="regMobile" placeholder="10-digit mobile number"></div>
+      <div class="form-group"><label class="form-label">🔒 Password</label><input class="form-input" id="regPassword" type="password" placeholder="Strong password banao"></div>
+      <div class="form-group"><label class="form-label">🔒 Confirm Password</label><input class="form-input" id="regConfirm" type="password" placeholder="Password dobara dalein"></div>
+      <button class="form-btn orange" onclick="doRegister()">🎉 Register Karo</button>
+      <p style="text-align:center;margin-top:14px;font-size:0.82rem;color:var(--gray)">Account hai? <span style="color:var(--accent2);cursor:pointer;font-weight:600" onclick="switchTab('login')">Login karo</span></p>
+    </div>
+  </div>
+</div>
+
+<div class="doc-viewer-overlay" id="docViewerOverlay">
+  <div class="doc-viewer">
+    <div class="doc-viewer-header">
+      <div style="font-family:'Rajdhani',sans-serif;font-size:1.2rem;font-weight:700;color:var(--navy)">📄 Document Details</div>
+      <button class="modal-close" style="position:static" onclick="closeDocViewer()">✕</button>
+    </div>
+    <div class="doc-viewer-body" id="docViewerBody"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const MEM={users:{},docs:{},session:null};
+const DB={
+  getUsers:()=>MEM.users,saveUsers:(u)=>{MEM.users=u;},
+  getDocs:(uid)=>MEM.docs[uid]||[],saveDocs:(uid,docs)=>{MEM.docs[uid]=docs;},
+  getSession:()=>MEM.session,setSession:(s)=>{MEM.session=s;},clearSession:()=>{MEM.session=null;}
+};
+function registerUser(name,email,mobile,password){
+  const users=DB.getUsers();const key=email.toLowerCase();
+  if(users[key])return{ok:false,msg:'Yeh email pehle se registered hai!'};
+  if(password.length<6)return{ok:false,msg:'Password kam se kam 6 characters ka hona chahiye.'};
+  const uid='u_'+Date.now();
+  users[key]={uid,name,email,mobile,password,createdAt:new Date().toISOString()};
+  DB.saveUsers(users);return{ok:true};
+}
+function loginUser(emailOrMobile,password){
+  const users=DB.getUsers();const key=emailOrMobile.toLowerCase();
+  const user=users[key]||Object.values(users).find(u=>u.mobile===emailOrMobile);
+  if(!user)return{ok:false,msg:'Email / Mobile nahi mila. Register karo pehle.'};
+  if(user.password!==password)return{ok:false,msg:'Password galat hai!'};
+  DB.setSession({uid:user.uid,name:user.name,email:user.email});return{ok:true,user};
+}
+function saveDocument(uid,doc){const docs=DB.getDocs(uid);docs.unshift(doc);DB.saveDocs(uid,docs);}
+function deleteDocument(uid,docId){let docs=DB.getDocs(uid);docs=docs.filter(d=>d.id!==docId);DB.saveDocs(uid,docs);}
+function openModal(tab){document.getElementById('authModal').classList.add('open');switchTab(tab||'login');}
+function closeModal(){document.getElementById('authModal').classList.remove('open');clearAuthMsg();}
+function switchTab(tab){
+  document.getElementById('loginForm').style.display=tab==='login'?'block':'none';
+  document.getElementById('registerForm').style.display=tab==='register'?'block':'none';
+  document.getElementById('tabLogin').classList.toggle('active',tab==='login');
+  document.getElementById('tabRegister').classList.toggle('active',tab==='register');
+  clearAuthMsg();
+}
+function showAuthMsg(msg,type){const el=document.getElementById('authMsg');el.className='msg '+type;el.textContent=msg;}
+function clearAuthMsg(){const el=document.getElementById('authMsg');el.className='msg';el.textContent='';}
+function doLogin(){
+  const e=document.getElementById('loginEmail').value.trim();
+  const p=document.getElementById('loginPassword').value;
+  if(!e||!p){showAuthMsg('Sab fields fill karo!','error');return;}
+  const res=loginUser(e,p);
+  if(!res.ok){showAuthMsg(res.msg,'error');return;}
+  closeModal();showToast('✅ Welcome back, '+res.user.name+'!','green');showDashboard();
+}
+function doRegister(){
+  const name=document.getElementById('regName').value.trim();
+  const email=document.getElementById('regEmail').value.trim();
+  const mobile=document.getElementById('regMobile').value.trim();
+  const pass=document.getElementById('regPassword').value;
+  const conf=document.getElementById('regConfirm').value;
+  if(!name||!email||!mobile||!pass){showAuthMsg('Sab fields zaruri hain!','error');return;}
+  if(pass!==conf){showAuthMsg('Dono passwords match nahi karte!','error');return;}
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){showAuthMsg('Valid email address dalein!','error');return;}
+  if(!/^\d{10}$/.test(mobile)){showAuthMsg('10-digit mobile number dalein!','error');return;}
+  const res=registerUser(name,email,mobile,pass);
+  if(!res.ok){showAuthMsg(res.msg,'error');return;}
+  showAuthMsg('🎉 Registration successful! Ab login karo.','success');
+  setTimeout(()=>switchTab('login'),1200);
+}
+function logout(){
+  DB.clearSession();
+  document.getElementById('dashPage').classList.remove('active');
+  document.getElementById('homePage').classList.add('active');
+  document.getElementById('navRight').innerHTML=`<button class="nav-btn btn-outline" onclick="openModal('login')">Login</button><button class="nav-btn btn-primary" onclick="openModal('register')">Register</button>`;
+  showToast('👋 Logout ho gaye!');
+}
+function showDashboard(){
+  const session=DB.getSession();if(!session)return;
+  document.getElementById('homePage').classList.remove('active');
+  document.getElementById('dashPage').classList.add('active');
+  document.getElementById('dashName').textContent=session.name;
+  document.getElementById('navRight').innerHTML=`<div class="user-chip"><div class="user-avatar">${session.name[0].toUpperCase()}</div>${session.name.split(' ')[0]}</div><button class="nav-btn btn-danger" onclick="logout()">Logout</button>`;
+  renderDocs();updateStats();
+}
+let pendingFile=null;
+function handleFileSelect(e){
+  const file=e.target.files[0];if(!file)return;
+  if(file.size>10*1024*1024){showToast('❌ File 10MB se badi hai!','red');return;}
+  pendingFile=file;
+  document.getElementById('uploadForm').style.display='block';
+  document.getElementById('selectedFileName').textContent='📎 Selected: '+file.name+' ('+(file.size/1024).toFixed(1)+' KB)';
+  document.getElementById('docName').value=file.name.replace(/\.[^.]+$/,'');
+}
+function cancelUpload(){
+  pendingFile=null;document.getElementById('uploadForm').style.display='none';
+  document.getElementById('fileInput').value='';
+  ['docName','docType','docDate','docAuthority'].forEach(id=>document.getElementById(id).value='');
+}
+function uploadDocument(){
+  const name=document.getElementById('docName').value.trim();
+  const type=document.getElementById('docType').value;
+  const date=document.getElementById('docDate').value;
+  const auth=document.getElementById('docAuthority').value.trim();
+  if(!name||!type){showToast('❌ Naam aur type zaruri hai!','red');return;}
+  const session=DB.getSession();
+  const typeLabels={identity:'🪪 Identity',education:'🎓 Education',vehicle:'🚗 Vehicle',property:'🏠 Property',medical:'🏥 Medical',financial:'💰 Financial',other:'📄 Other'};
+  const doc={id:'doc_'+Date.now(),name,type,typeLabel:typeLabels[type]||'📄 Other',date:date||new Date().toISOString().split('T')[0],authority:auth||'Self Uploaded',fileName:pendingFile?pendingFile.name:name,fileSize:pendingFile?(pendingFile.size/1024).toFixed(1)+' KB':'N/A',uploadedAt:new Date().toISOString(),verified:['identity','vehicle'].includes(type)};
+  saveDocument(session.uid,doc);cancelUpload();renderDocs();updateStats();
+  showToast('✅ Document upload ho gaya!','green');
+}
+const typeIcons={identity:'🪪',education:'🎓',vehicle:'🚗',property:'🏠',medical:'🏥',financial:'💰',other:'📄'};
+function renderDocs(){
+  const session=DB.getSession();if(!session)return;
+  let docs=DB.getDocs(session.uid);
+  const search=document.getElementById('searchDocs').value.toLowerCase();
+  const cat=document.getElementById('filterCat').value;
+  if(search)docs=docs.filter(d=>d.name.toLowerCase().includes(search)||d.typeLabel.toLowerCase().includes(search));
+  if(cat)docs=docs.filter(d=>d.type===cat);
+  const grid=document.getElementById('docGrid');
+  if(!docs.length){grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">📂</div><div>Koi document nahi mila. Upar se upload karo!</div></div>`;return;}
+  grid.innerHTML=docs.map(d=>`<div class="doc-card">${d.verified?'<div class="doc-verified">✅ Verified</div>':''}<div class="doc-icon">${typeIcons[d.type]||'📄'}</div><div class="doc-name">${escHtml(d.name)}</div><div class="doc-type">${d.typeLabel}</div><div class="doc-date">📅 ${d.date}</div><div class="doc-actions"><button class="doc-action-btn btn-view" onclick="viewDoc('${d.id}')">👁 View</button><button class="doc-action-btn btn-del" onclick="delDoc('${d.id}')">🗑</button></div></div>`).join('');
+}
+function updateStats(){
+  const session=DB.getSession();const docs=DB.getDocs(session.uid);
+  document.getElementById('statTotal').textContent=docs.length;
+  document.getElementById('statVerified').textContent=docs.filter(d=>d.verified).length;
+  document.getElementById('statCategories').textContent=[...new Set(docs.map(d=>d.type))].length;
+}
+function delDoc(id){
+  if(!confirm('Kya aap yeh document delete karna chahte hain?'))return;
+  const session=DB.getSession();deleteDocument(session.uid,id);renderDocs();updateStats();
+  showToast('🗑 Document delete ho gaya!','red');
+}
+function viewDoc(id){
+  const session=DB.getSession();const doc=DB.getDocs(session.uid).find(d=>d.id===id);if(!doc)return;
+  document.getElementById('docViewerBody').innerHTML=`${doc.verified?'<div class="verified-banner">✅ Yeh document digitally verified hai | Issuing Authority se confirmed</div>':''}<div class="doc-preview-area"><div class="doc-preview-icon">${typeIcons[doc.type]||'📄'}</div><div class="doc-preview-name">${escHtml(doc.name)}</div></div><div class="doc-detail-row"><div class="doc-detail-label">Document Name</div><div class="doc-detail-val">${escHtml(doc.name)}</div></div><div class="doc-detail-row"><div class="doc-detail-label">Category</div><div class="doc-detail-val">${doc.typeLabel}</div></div><div class="doc-detail-row"><div class="doc-detail-label">Issue Date</div><div class="doc-detail-val">📅 ${doc.date}</div></div><div class="doc-detail-row"><div class="doc-detail-label">Issuing Authority</div><div class="doc-detail-val">${escHtml(doc.authority)}</div></div><div class="doc-detail-row"><div class="doc-detail-label">File Name</div><div class="doc-detail-val">${escHtml(doc.fileName)}</div></div><div class="doc-detail-row"><div class="doc-detail-label">File Size</div><div class="doc-detail-val">${doc.fileSize}</div></div><div class="doc-detail-row"><div class="doc-detail-label">Upload Date</div><div class="doc-detail-val">${new Date(doc.uploadedAt).toLocaleString('en-IN')}</div></div><div class="doc-detail-row"><div class="doc-detail-label">Status</div><div class="doc-detail-val" style="color:${doc.verified?'var(--green)':'var(--gray)'}">${doc.verified?'✅ Verified':'⏳ Pending Verification'}</div></div><button class="form-btn" style="margin-top:16px;background:var(--accent2)" onclick="shareDoc()">📤 Share Document</button>`;
+  document.getElementById('docViewerOverlay').classList.add('open');
+}
+function closeDocViewer(){document.getElementById('docViewerOverlay').classList.remove('open');}
+function shareDoc(){showToast('🔗 Share link generate ho raha hai...','green');closeDocViewer();}
+const ua=document.getElementById('uploadArea');
+ua.addEventListener('dragover',e=>{e.preventDefault();ua.classList.add('dragover');});
+ua.addEventListener('dragleave',()=>ua.classList.remove('dragover'));
+ua.addEventListener('drop',e=>{e.preventDefault();ua.classList.remove('dragover');const file=e.dataTransfer.files[0];if(file)handleFileSelect({target:{files:[file]}});});
+document.getElementById('authModal').addEventListener('click',function(e){if(e.target===this)closeModal();});
+document.getElementById('docViewerOverlay').addEventListener('click',function(e){if(e.target===this)closeDocViewer();});
+function showToast(msg,type=''){const t=document.getElementById('toast');t.textContent=msg;t.className='toast show'+(type?' '+type:'');setTimeout(()=>t.className='toast',3200);}
+function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+</script>
+</body>
+</html>
